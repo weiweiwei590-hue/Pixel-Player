@@ -1,0 +1,1001 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Pixel Music Player</title>
+
+    <style>
+        body {
+            margin: 0;
+            min-height: 100vh;
+
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+
+            background: #111;
+            font-family: Arial, sans-serif;
+
+            padding: 30px 0;
+            box-sizing: border-box;
+        }
+
+        .player {
+            width: 350px;
+            padding: 25px;
+
+            background-image: url("background.png");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            border: 4px solid #ff3131;
+            box-shadow:
+                0 0 10px #ff3131,
+                0 0 25px #ff3131;
+
+            text-align: center;
+        }
+
+        /* Album image */
+
+        .album {
+            width: 220px;
+            height: 220px;
+
+            object-fit: cover;
+
+            border: 3px solid white;
+            image-rendering: pixelated;
+
+            margin-bottom: 15px;
+        }
+
+        /* Song title */
+
+        #songTitle {
+            color: white;
+            font-size: 22px;
+            margin: 10px;
+        }
+
+        #artist {
+            color: #aaa;
+            margin-bottom: 20px;
+        }
+
+        /* Progress bar */
+
+        #progress {
+            width: 100%;
+            cursor: pointer;
+        }
+
+        /* Buttons */
+
+        button {
+            background: #ff3131;
+            color: white;
+
+            border: none;
+            padding: 12px 20px;
+
+            margin: 10px;
+
+            cursor: pointer;
+            font-size: 18px;
+
+            box-shadow: 0 0 10px #ff3131;
+        }
+
+        button:hover {
+            transform: scale(1.08);
+        }
+
+        /* Song list */
+
+        .songs {
+            margin-top: 20px;
+            text-align: left;
+
+             max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .song {
+            padding: 12px;
+
+            margin: 5px 0;
+
+            background: #292929;
+            color: white;
+
+            cursor: pointer;
+
+            border-left: 4px solid #ff3131;
+        }
+
+        .song:hover {
+            background: #3a3a3a;
+        }
+
+        /* Volume */
+
+        #volume {
+            width: 100%;
+        }
+
+        /* Playlist*/
+
+        .playlist-controls {
+            margin-top: 20px;
+        }
+
+        .playlist-controls button {
+            width: 100%;
+        }
+
+        .playlist {
+            background: #292929;
+            color: white;
+            padding: 12px;
+            margin-top: 8px;
+            border-left: 4px solid #ff3131;
+            cursor: pointer;
+        }
+
+        .playlist:hover {
+            background: #3a3a3a;
+        }
+
+        .playlist span {
+            float: right;
+            color: #aaa;
+        }
+
+        .playlist-song {
+            display: flex;
+            align-items: center;
+
+            background: #292929;
+            color: white;
+
+            padding: 10px;
+            margin-top: 5px;
+
+            border-left: 4px solid #ff3131;
+        }
+
+        .playlist-song span {
+            flex: 1;
+        }
+
+        .playlist-song button {
+            margin: 3px;
+            padding: 8px 12px;
+        }
+</style>
+</head>
+
+
+<body>
+
+<div class="player">
+
+    <!-- Album picture -->
+
+    <img id="album"
+         class="album"
+         src="album.png"
+         alt="Album Art">
+
+
+    <!-- Song information -->
+
+    <div id="songTitle">
+        My Song
+    </div>
+
+    <div id="artist">
+        My Artist
+    </div>
+
+
+    <!-- Progress -->
+
+    <input
+        type="range"
+        id="progress"
+        value="0"
+        min="0"
+        max="100">
+
+
+    <!-- Buttons -->
+
+    <button onclick="previousSong()">⏮</button>
+
+    <button onclick="playPause()" id="playButton">
+        ▶
+    </button>
+
+    <button onclick="nextSong()">⏭</button>
+
+
+    <!-- Volume -->
+
+    <p style="color:white;">🔊 Volume</p>
+
+    <input
+        type="range"
+        id="volume"
+        min="0"
+        max="1"
+        step="0.01"
+        value="1">
+
+
+    <!-- Song List -->
+
+    <div class="playlist-controls">
+        <button onclick="createPlaylist()">＋ Create Playlist</button>
+    </div>
+
+    <div id="playlists"></div>
+
+    <div class="songs">
+
+        <div class="song">
+            <span onclick="selectSong(0)">
+                🎵 Run Rabbit
+            </span>
+            <button onclick="addToPlaylist(0)">＋</button>
+        </div>
+
+        <div class="song">
+            <span onclick="selectSong(1)">
+                🎵 He's My Man
+            </span>
+            <button onclick="addToPlaylist(1)">＋</button>
+        </div>
+
+        <div class="song">
+            <span onclick="selectSong(2)">
+                🎵 Jane!
+            </span>
+            <button onclick="addToPlaylist(2)">＋</button>
+        </div>
+
+        <div class="song">
+            <span onclick="selectSong(3)">
+                🎵 we fell in love in october
+            </span>
+            <button onclick="addToPlaylist(3)">＋</button>
+        </div>
+
+        <div class="song">
+            <span onclick="selectSong(4)">
+                🎵 Flowers
+            </span>
+            <button onclick="addToPlaylist(4)">＋</button>
+        </div>
+
+        <div class="song">
+            <span onclick="selectSong(5)">
+                🎵 Counting Stars
+            </span>
+            <button onclick="addToPlaylist(5)">＋</button>
+        </div>
+
+        <div class="song">
+            <span onclick="selectSong(6)">
+                🎵 Orange County
+            </span>
+            <button onclick="addToPlaylist(6)">＋</button>
+        </div>
+
+        <div class="song">
+            <span onclick="selectSong(7)">
+                🎵 misery
+            </span>
+            <button onclick="addToPlaylist(7)">＋</button>
+        </div>
+
+        <div class="song">
+            <span onclick="selectSong(8)">
+                🎵 Impostor Syndrome
+            </span>
+            <button onclick="addToPlaylist(8)">＋</button>
+        </div>
+
+        <div class="song">
+            <span onclick="selectSong(9)">
+                🎵 Fade Into You
+            </span>
+            <button onclick="addToPlaylist(9)">＋</button>
+        </div>
+
+        <div class="song">
+            <span onclick="selectSong(10)">
+                🎵 Sailor Song
+            </span>
+            <button onclick="addToPlaylist(10)">＋</button>
+        </div>
+
+        <div class="song">
+            <span onclick="selectSong(11)">
+                🎵 Nothing's New
+            </span>
+            <button onclick="addToPlaylist(11)">＋</button>
+        </div>
+
+        <div class="song">
+            <span onclick="selectSong(12)">
+                🎵 Nope your too late i already died
+            </span>
+            <button onclick="addToPlaylist(12)">＋</button>
+        </div>
+
+        <div class="song">
+            <span onclick="selectSong(13)">
+                🎵 Be My Baby
+            </span>
+            <button onclick="addToPlaylist(13)">＋</button>
+        </div>
+
+        <div class="song">
+            <span onclick="selectSong(14)">
+                🎵 Runaway
+            </span>
+            <button onclick="addToPlaylist(14)">＋</button>
+        </div>
+
+        <div class="song">
+            <span onclick="selectSong(15)">
+                🎵 Those Eyes
+            </span>
+            <button onclick="addToPlaylist(15)">＋</button>
+        </div>
+
+        <div class="song">
+            <span onclick="selectSong(16)">
+                🎵 I Love You So - Acoustic
+            </span>
+            <button onclick="addToPlaylist(16)">＋</button>
+        </div>
+
+        <div class="song">
+            <span onclick="selectSong(17)">
+                🎵 Lovers Rock
+            </span>
+            <button onclick="addToPlaylist(17)">＋</button>
+        </div>
+
+        <div class="song">
+            <span onclick="selectSong(18)">
+                🎵 Wolf in Sheep's Clothing
+            </span>
+            <button onclick="addToPlaylist(18)">＋</button>
+        </div>
+
+        <div class="song">
+            <span onclick="selectSong(19)">
+                🎵 Brutus
+            </span>
+            <button onclick="addToPlaylist(19)">＋</button>
+        </div>
+
+        <div class="song">
+            <span onclick="selectSong(20)">
+                🎵 Harpy Hare
+            </span>
+            <button onclick="addToPlaylist(20)">＋</button>
+        </div>
+
+        <div class="song">
+            <span onclick="selectSong(21)">
+                🎵 Army Dreamers - 2018 Remaster
+            </span>
+            <button onclick="addToPlaylist(21)">＋</button>
+        </div>
+
+        <div class="song">
+            <span onclick="selectSong(22)">
+                🎵 My Alcoholic Friends
+            </span>
+            <button onclick="addToPlaylist(22)">＋</button>
+        </div>
+
+        <div class="song">
+            <span onclick="selectSong(23)">
+                🎵 No One Noticed (Extended English)
+            </span>
+            <button onclick="addToPlaylist(23)">＋</button>
+        </div>
+
+        <div class="song">
+            <span onclick="selectSong(24)">
+                🎵 Earrings
+            </span>
+            <button onclick="addToPlaylist(24)">＋</button>
+        </div>
+
+        <div class="song">
+            <span onclick="selectSong(25)">
+                🎵 Prom Queen
+            </span>
+            <button onclick="addToPlaylist(25)">＋</button>
+        </div>
+
+        <div class="song">
+            <span onclick="selectSong(26)">
+                🎵 Documentaries
+            </span>
+            <button onclick="addToPlaylist(26)">＋</button>
+        </div>
+
+        <div class="song">
+            <span onclick="selectSong(27)">
+                🎵 Villain
+            </span>
+            <button onclick="addToPlaylist(27)">＋</button>
+        </div>
+
+        <div class="song">
+            <span onclick="selectSong(28)">
+                🎵 2
+            </span>
+            <button onclick="addToPlaylist(28)">＋</button>
+        </div>
+
+</div>
+
+
+<script>
+
+    /* =========================
+       SONGS
+       ========================= */
+
+    const songs = [
+
+        {
+            title: "Run Rabbit",
+            artist: "Unknown",
+            audio: "Run Rabbit.mp3",
+            image: "run rabbit.png"
+        },
+
+        {
+            title: "He's My Man",
+            artist: "Unknown",
+            audio: "He's My Man.mp3",
+            image: "He's My Man.png"
+        },
+
+        {
+            title: "Jane!",
+            artist: "Unknown",
+            audio: "Jane!.mp3",
+            image: "Jane!.png"
+        },
+
+        {
+            title: "we fell in love in october",
+            artist: "Unknown",
+            audio: "we fell in love in october.mp3",
+            image: "we fell in love in october.png"
+        },
+
+        {
+            title: "Flowers",
+            artist: "Unknown",
+            audio: "Flowers.mp3",
+            image: "Flowers.png"
+        },
+
+        {
+            title: "Counting Stars",
+            artist: "Unknown",
+            audio: "Counting Stars.mp3",
+            image: "Counting Stars.png"
+        },
+
+        {
+            title: "Orange County",
+            artist: "Unknown",
+            audio: "Orange County.mp3",
+            image: "Orange County.png"
+        },
+
+        {
+            title: "misery",
+            artist: "Unknown",
+            audio: "misery.mp3",
+            image: "misery.png"
+        },
+
+        {
+            title: "Impostor Syndrome",
+            artist: "Unknown",
+            audio: "Impostor Syndrome.mp3",
+            image: "Impostor Syndrome.png"
+        },
+
+        {
+            title: "Fade Into You",
+            artist: "Unknown",
+            audio: "Fade Into You.mp3",
+            image: "Fade Into You.png"
+        },
+
+        {
+            title: "Sailor Song",
+            artist: "Unknown",
+            audio: "Sailor Song.mp3",
+            image: "Sailor Song.png"
+        },
+
+        {
+            title: "Nothing's New",
+            artist: "Unknown",
+            audio: "Nothing's New.mp3",
+            image: "Nothing's New.png"
+        },
+
+        {
+            title: "Nope your too late i already died",
+            artist: "Unknown",
+            audio: "Nope your too late i already died.mp3",
+            image: "Nope your too late i already died.png"
+        },
+
+        {
+            title: "Be My Baby",
+            artist: "Unknown",
+            audio: "Be My Baby.mp3",
+            image: "Be My Baby.png"
+        },
+
+        {
+            title: "Runaway",
+            artist: "Unknown",
+            audio: "Runaway.mp3",
+            image: "Runaway.png"
+        },
+
+        {
+            title: "Lovers Rock",
+            artist: "Unknown",
+            audio: "Lovers Rock.mp3",
+            image: "Lovers Rock.png"
+        },
+
+        {
+            title: "I Love You So - Acoustic",
+            artist: "Unknown",
+            audio: "I Love You So - Acoustic.mp3",
+            image: "I Love You So - Acoustic.png"
+        },
+
+        {
+            title: "Lovers Rock",
+            artist: "Unknown",
+            audio: "Lovers Rock.mp3",
+            image: "Lovers Rock.png"
+        },
+
+        {
+            title: "Wolf in Sheep's Clothing",
+            artist: "Unknown",
+            audio: "Wolf in Sheep's Clothing.mp3",
+            image: "Wolf in Sheep's Clothing.png"
+        },
+
+
+        {
+            title: "Brutus",
+            artist: "Unknown",
+            audio: "Brutus.mp3",
+            image: "Brutus.png"
+        },
+
+        {
+            title: "Harpy Hare",
+            artist: "Unknown",
+            audio: "Harpy Hare.mp3",
+            image: "Harpy Hare.png"
+        },
+
+        {
+            title: "Army Dreamers - 2018 Remaster",
+            artist: "Unknown",
+            audio: "Army Dreamers - 2018 Remaster.mp3",
+            image: "Army Dreamers - 2018 Remaster.png"
+        },
+
+        {
+            title: "My Alcoholic Friends",
+            artist: "Unknown",
+            audio: "My Alcoholic Friends.mp3",
+            image: "My Alcoholic Friends.png"
+        },
+
+        {
+            title: "No One Noticed (Extended English)",
+            artist: "Unknown",
+            audio: "No One Noticed (Extended English).mp3",
+            image: "No One Noticed (Extended English).png"
+        },
+
+        {
+            title: "Earrings",
+            artist: "Unknown",
+            audio: "Earrings.mp3",
+            image: "Earrings.png"
+        },
+
+        {
+            title: "Prom Queen",
+            artist: "Unknown",
+            audio: "Prom Queen.mp3",
+            image: "Prom Queen.png"
+        },
+
+        {
+            title: "Documentaries",
+            artist: "Unknown",
+            audio: "Documentaries.mp3",
+            image: "Documentaries.png"
+        },
+
+        {
+            title: "Villain",
+            artist: "Unknown",
+            audio: "Villain.mp3",
+            image: "Villain.png"
+        }
+
+    ];
+
+
+    let currentSong = 0;
+
+    let audio = new Audio();
+
+
+    /* =========================
+       LOAD SONG
+       ========================= */
+
+    function loadSong(index) {
+
+        currentSong = index;
+
+        audio.src = songs[index].audio;
+
+        document.getElementById("songTitle").innerText =
+            songs[index].title;
+
+        document.getElementById("artist").innerText =
+            songs[index].artist;
+
+        document.getElementById("album").src =
+            songs[index].image;
+
+        audio.load();
+    }
+
+
+    /* =========================
+       PLAY / PAUSE
+       ========================= */
+
+    function playPause() {
+
+        if (audio.paused) {
+
+            audio.play();
+
+            document.getElementById("playButton")
+                .innerText = "⏸";
+
+        } else {
+
+            audio.pause();
+
+            document.getElementById("playButton")
+                .innerText = "▶";
+
+        }
+    }
+
+
+    /* =========================
+       SELECT SONG
+       ========================= */
+
+    function selectSong(index) {
+
+        loadSong(index);
+
+        audio.play();
+
+        document.getElementById("playButton")
+            .innerText = "⏸";
+    }
+
+
+    /* =========================
+       NEXT SONG
+       ========================= */
+
+    function nextSong() {
+
+        currentSong++;
+
+        if (currentSong >= songs.length) {
+            currentSong = 0;
+        }
+
+        loadSong(currentSong);
+
+        audio.play();
+
+        document.getElementById("playButton")
+            .innerText = "⏸";
+    }
+
+
+    /* =========================
+       PREVIOUS SONG
+       ========================= */
+
+    function previousSong() {
+
+        currentSong--;
+
+        if (currentSong < 0) {
+            currentSong = songs.length - 1;
+        }
+
+        loadSong(currentSong);
+
+        audio.play();
+
+        document.getElementById("playButton")
+            .innerText = "⏸";
+    }
+
+
+    /* =========================
+       PROGRESS BAR
+       ========================= */
+
+    audio.addEventListener("timeupdate", function() {
+
+        if (audio.duration) {
+
+            let progress =
+                (audio.currentTime / audio.duration) * 100;
+
+            document.getElementById("progress").value =
+                progress;
+        }
+
+    });
+
+
+    /* Click progress bar */
+
+    document.getElementById("progress")
+        .addEventListener("input", function() {
+
+            if (audio.duration) {
+
+                audio.currentTime =
+                    (this.value / 100) * audio.duration;
+
+            }
+
+        });
+
+
+    /* =========================
+       VOLUME
+       ========================= */
+
+    document.getElementById("volume")
+        .addEventListener("input", function() {
+
+            audio.volume = this.value;
+
+        });
+
+
+    /* =========================
+       AUTOMATIC NEXT SONG
+       ========================= */
+
+    audio.addEventListener("ended", function() {
+
+        nextSong();
+
+    });
+
+
+    /* Load first song */
+
+    loadSong(0);
+
+    let playlists = JSON.parse(localStorage.getItem("playlists")) || {};
+
+    function createPlaylist() {
+
+        let name = prompt("Enter playlist name:");
+
+        if (!name || name.trim() === "") {
+        return;
+        }
+
+        name = name.trim();
+
+        if (playlists[name]) {
+            alert("That playlist already exists!");
+            return;
+        }
+
+        playlists[name] = [];
+
+        savePlaylists();
+        showPlaylists();
+    }
+
+    function savePlaylists() {
+        localStorage.setItem(
+            "playlists",
+            JSON.stringify(playlists)
+        );
+    }
+
+    function showPlaylists() {
+
+        const container =
+            document.getElementById("playlists");
+
+        container.innerHTML = "";
+
+        for (let name in playlists) {
+
+            let playlist = document.createElement("div");
+
+            playlist.className = "playlist";
+
+            playlist.innerHTML = `
+                📁 ${name}
+                <span>${playlists[name].length} songs</span>
+            `;
+
+            playlist.onclick = function() {
+                openPlaylist(name);
+            };
+
+            container.appendChild(playlist);
+        }
+    }
+
+    function openPlaylist(name) {
+
+        const container = document.getElementById("playlists");
+
+        container.innerHTML = "";
+
+        // Playlist title
+        const title = document.createElement("div");
+
+        title.innerHTML = `
+            <h2 style="color:white;">
+                📁 ${name}
+            </h2>
+        `;
+
+        container.appendChild(title);
+
+
+        // Back button
+        const backButton = document.createElement("button");
+
+        backButton.innerText = "← Back";
+
+        backButton.onclick = function() {
+            showPlaylists();
+        };
+
+        container.appendChild(backButton);
+
+
+        // Show songs
+        playlists[name].forEach(function(songIndex) {
+
+            const song = document.createElement("div");
+
+            song.className = "playlist-song";
+
+            song.innerHTML = `
+                <span>
+                    🎵 ${songs[songIndex].title}
+                </span>
+
+                <button onclick="selectSong(${songIndex})">
+                    ▶
+                </button>
+
+                <button onclick="removeFromPlaylist('${name}', ${songIndex})">
+                    🗑
+                </button>
+            `;
+
+            container.appendChild(song);
+
+        });
+    }
+
+    function removeFromPlaylist(name, songIndex) {
+
+        playlists[name] =
+            playlists[name].filter(
+                index => index !== songIndex
+            );
+
+        savePlaylists();
+
+        openPlaylist(name);
+    }
+
+    function addToPlaylist(songIndex) {
+
+        let names = Object.keys(playlists);
+
+        if (names.length === 0) {
+            alert("Create a playlist first!");
+            return;
+        }
+
+        let choice = prompt(
+            "Add \"" + songs[songIndex].title +
+            "\" to which playlist?\n\n" +
+            names.join("\n")
+        );
+
+        if (!choice) {
+            return;
+        }
+
+        if (!playlists[choice]) {
+            alert("Playlist not found.");
+            return;
+        }
+
+        if (playlists[choice].includes(songIndex)) {
+            alert("This song is already in " + choice + "!");
+            return;
+        }
+
+        playlists[choice].push(songIndex);
+
+        savePlaylists();
+        showPlaylists();
+
+        alert(
+            "\"" + songs[songIndex].title +
+            "\" added to " + choice + "!"
+        );
+    }
+
+
+    showPlaylists();
+
+</script>
+
+</script>
+
+</body>
+</html>
